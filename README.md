@@ -4,7 +4,7 @@
 
 [![Specification Version](https://img.shields.io/badge/spec-v0.0.1-blue.svg)](https://productascode.org/spec)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/productascode/spec?style=social)](https://github.com/productascode/pac-spec/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/productascode/spec?style=social)](https://github.com/productascode/pac-specification/stargazers)
 
 Product as Code (PaC) is a methodology and specification for managing product development using GitOps principles. It brings version control, structured data, and AI-native workflows to product management.
 
