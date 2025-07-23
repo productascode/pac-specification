@@ -1,0 +1,32 @@
+{
+  "name": "pac-specification",
+  "version": "0.0.1",
+  "description": "Product as Code Specification",
+  "private": true,
+  "license": "Apache-2.0",
+  "homepage": "https://spec.productascode.org/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/productascode/pac-specification.git"
+  },
+  "scripts": {
+    "build": "./scripts/publish-spec.sh",
+    "serve": "npx http-server public -p 8080",
+    "dev": "npm run build && npm run serve",
+    "test": "npm run test:format && npm run test:build",
+    "format": "prettier --write \"**/*.{md,yml,yaml,json}\"",
+    "test:format": "prettier --check \"**/*.{md,yml,yaml,json}\"",
+    "test:build": "npx spec-md --metadata spec/metadata.json spec/ProductAsCode.md > /dev/null",
+    "watch": "nodemon -e md,json --watch spec --exec \"npm run build\""
+  },
+  "devDependencies": {
+    "spec-md": "^3.1.0",
+    "http-server": "^14.1.1",
+    "prettier": "^3.3.3",
+    "nodemon": "^3.1.4"
+  },
+  "prettier": {
+    "proseWrap": "always",
+    "trailingComma": "none"
+  }
+}
