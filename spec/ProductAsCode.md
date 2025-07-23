@@ -61,12 +61,14 @@ The schema exposes two types of fields: Fixed fields, which have a declared name
 
 #### YAML Format
 YAML version [1.2](http://www.yaml.org/spec/1.2/spec.html) is RECOMMENDED for human readability and ease of editing. YAML is particularly well-suited for:
+
 - Manual editing and review
 - Version control diffs
 - Collaborative editing in text editors
 
 #### JSON Format
 JSON format is RECOMMENDED for programmatic generation and processing. JSON is particularly well-suited for:
+
 - Tool integration and API consumption
 - Automated generation from existing systems
 - Environments where YAML parsing is not available
@@ -79,12 +81,14 @@ Both formats MUST represent identical data structures. Tools SHOULD provide conv
 A Product as Code document MAY be made up of a single document or be divided into multiple, connected parts at the discretion of the user. In the latter case, references between documents MUST use the unique identifier fields.
 
 It is RECOMMENDED that Product as Code documents be named with descriptive names and appropriate file extensions:
+
 - YAML format: `epic-user-auth.yaml`, `ticket-login-form.yml`
 - JSON format: `epic-user-auth.json`, `ticket-login-form.json`
 
 ### Data Types
 
 Primitive data types in PAC are based on YAML 1.2 supported types:
+
 - `string` - UTF-8 text
 - `integer` - Whole numbers
 - `boolean` - true/false values
