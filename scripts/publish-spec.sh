@@ -66,6 +66,9 @@ HTML="<!DOCTYPE html>
     <meta charset=\"utf-8\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
     <title>Product as Code Specification</title>
+    <!-- Fathom - beautiful, simple website analytics -->
+    <script src="https://cdn.usefathom.com/script.js" data-site="KXKIQJSW" defer></script>
+    <!-- / Fathom -->
     <style>
       * {
         box-sizing: border-box;
