@@ -1,6 +1,10 @@
 #!/bin/bash -e
 # This script publishes the Product as Code specification document to the web.
 
+# Disable pagers to prevent hanging
+export PAGER=cat
+export LESS=-FRX
+
 # Check if npm is installed
 if ! command -v npm &> /dev/null; then
     echo "npm is not installed. Please install Node.js and npm first."
@@ -16,16 +20,35 @@ fi
 # Build the specification draft document
 echo "Building spec draft"
 mkdir -p public/draft
-npx spec-md --metadata spec/metadata.json --githubSource "https://github.com/productascode/pac-specification/blame/main/" spec/ProductAsCode.md > public/draft/index.html
+
+# Check if spec-md is available
+echo "Checking spec-md availability..."
+if ! npx --no -- spec-md --help > /dev/null 2>&1; then
+    echo "Error: spec-md is not available or not working properly"
+    echo "Trying to install spec-md..."
+    npm install spec-md
+fi
+
+# Run spec-md with timeout and better error handling
+echo "Running spec-md to build draft..."
+if ! timeout 60s npx --no -- spec-md --metadata spec/metadata.json --githubSource "https://github.com/productascode/pac-specification/blame/main/" spec/ProductAsCode.md > public/draft/index.html 2>/tmp/spec-md-error.log; then
+    echo "Error: spec-md command failed or timed out"
+    if [ -f /tmp/spec-md-error.log ]; then
+        echo "Error details:"
+        cat /tmp/spec-md-error.log
+    fi
+    exit 1
+fi
+echo "Draft build completed successfully"
 
 # Fetch all tags (in case of shallow clone)
 echo "Fetching tags..."
 # Try to unshallow the repository if it's a shallow clone
 if [ -f .git/shallow ]; then
   echo "Detected shallow clone, fetching full history..."
-  git fetch --unshallow --tags 2>/dev/null || echo "Could not unshallow repository"
+  timeout 10s git fetch --unshallow --tags 2>/dev/null || echo "Could not unshallow repository (timeout or error)"
 else
-  git fetch --tags 2>/dev/null || echo "Could not fetch tags"
+  timeout 10s git fetch --tags 2>/dev/null || echo "Could not fetch tags (timeout or error)"
 fi
 
 # List available tags for debugging
@@ -33,8 +56,12 @@ echo "Available tags:"
 git tag -l || echo "No tags found"
 
 # Build all tagged releases
-for GITTAG in $(git tag -l) ; do
-  echo "Building spec release $GITTAG"
+TAGS=$(git tag -l)
+if [ -z "$TAGS" ]; then
+  echo "No tags found, skipping tagged releases"
+else
+  for GITTAG in $TAGS ; do
+    echo "Building spec release $GITTAG"
   mkdir -p "public/$GITTAG"
 
   # Try to get the spec file from the tagged commit
@@ -48,11 +75,22 @@ for GITTAG in $(git tag -l) ; do
   fi
 
   # Build the tagged version
-  npx spec-md --metadata spec/metadata.json --githubSource "https://github.com/productascode/pac-specification/blame/$GITTAG/" /tmp/ProductAsCode-$GITTAG.md > "public/$GITTAG/index.html"
+  echo "  Running spec-md for tag $GITTAG..."
+  if ! timeout 60s npx --no -- spec-md --metadata spec/metadata.json --githubSource "https://github.com/productascode/pac-specification/blame/$GITTAG/" /tmp/ProductAsCode-$GITTAG.md > "public/$GITTAG/index.html" 2>/tmp/spec-md-error-$GITTAG.log; then
+    echo "  Error: spec-md command failed or timed out for tag $GITTAG"
+    if [ -f /tmp/spec-md-error-$GITTAG.log ]; then
+      echo "  Error details:"
+      cat /tmp/spec-md-error-$GITTAG.log
+      rm -f /tmp/spec-md-error-$GITTAG.log
+    fi
+    continue
+  fi
+  echo "  Successfully built $GITTAG"
 
   # Clean up
   rm -f /tmp/ProductAsCode-$GITTAG.md
-done
+  done
+fi
 
 # Create the index file
 echo "Rebuilding: / (index)"
@@ -232,9 +270,11 @@ HTML="<!DOCTYPE html>
 
 GITHUB_RELEASES="https://github.com/productascode/pac-specification/releases/tag"
 # Sort tags by version number in reverse order (newest first)
-for GITTAG in $(git tag -l | sort -V -r) ; do
-  TAGGEDCOMMIT=$(git rev-list -1 "$GITTAG")
-  GITDATE=$(git show -s --format=%cd --date=format:"%a, %b %-d, %Y" $TAGGEDCOMMIT)
+SORTED_TAGS=$(git tag -l | sort -V -r)
+if [ -n "$SORTED_TAGS" ]; then
+  for GITTAG in $SORTED_TAGS ; do
+    TAGGEDCOMMIT=$(git rev-list -1 "$GITTAG")
+    GITDATE=$(git show -s --format=%cd --date=format:"%a, %b %-d, %Y" $TAGGEDCOMMIT)
 
   HTML="$HTML
         <div class=\"release-item\">
@@ -249,7 +289,8 @@ for GITTAG in $(git tag -l | sort -V -r) ; do
             </svg>
           </a>
         </div>"
-done
+  done
+fi
 
 HTML="$HTML
       </div>
