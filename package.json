@@ -20,10 +20,10 @@
     "watch": "nodemon -e md,json --watch spec --exec \"npm run build\""
   },
   "devDependencies": {
-    "spec-md": "^3.1.0",
     "http-server": "^14.1.1",
+    "nodemon": "^3.1.4",
     "prettier": "^3.3.3",
-    "nodemon": "^3.1.4"
+    "spec-md": "^3.1.0"
   },
   "prettier": {
     "proseWrap": "always",
