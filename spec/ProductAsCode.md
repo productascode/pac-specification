@@ -971,8 +971,8 @@ kind: Config
 
 # Project metadata
 project:
-  name: "user-authentication-system"
-  description: "Complete authentication system with OAuth integration"
+  name: "Cortexy"
+  description: "Business Assistant"
   owner: "product-team"
   folder: "product" # Directory for PaC files (default: "product")
 
