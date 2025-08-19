@@ -430,14 +430,14 @@ comprise the unit of work.
 
 #### Task Specification Object
 
-| Field Name  |   Type    | Description                                                                                                                                                           |
-| ----------- | :-------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| description | `string`  | **REQUIRED**. A specific, actionable description of the implementation step.                                                                                          |
-| done        | `boolean` | **REQUIRED**. Whether this Task has been completed.                                                                                                                   |
-| type        | `string`  | The type of work this Task represents. Common values include `feature`, `bug`, `chore`, `refactor`, `test`, `documentation`. Teams MAY define custom types as needed. |
-| assignee    | `string`  | The person responsible for this Task.                                                                                                                                 |
-| estimate    | `string`  | Time estimate for completing this Task in ISO 8601 duration format (e.g., `"PT2H"` for 2 hours).                                                                      |
-| actual_time | `string`  | Actual time spent completing this Task in ISO 8601 duration format.                                                                                                   |
+| Field Name  |   Type   | Description                                                                                                                                                           |
+| ----------- | :------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| description | `string` | **REQUIRED**. A specific, actionable description of the implementation step.                                                                                          |
+| status      | `string` | **REQUIRED**. The current status of the Task. Common values include `todo`, `in-progress`, `completed`, `blocked`.                                                    |
+| type        | `string` | The type of work this Task represents. Common values include `feature`, `bug`, `chore`, `refactor`, `test`, `documentation`. Teams MAY define custom types as needed. |
+| assignee    | `string` | The person responsible for this Task.                                                                                                                                 |
+| estimate    | `string` | Time estimate for completing this Task in ISO 8601 duration format (e.g., `"PT2H"` for 2 hours).                                                                      |
+| actual_time | `string` | Actual time spent completing this Task in ISO 8601 duration format.                                                                                                   |
 
 ### Pull Request Object
 
