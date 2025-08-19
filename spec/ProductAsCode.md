@@ -343,12 +343,12 @@ organization in the Product as Code hierarchy.
 
 #### Fixed Fields
 
-| Field Name |                          Type                           | Description                                                                                                                                                                                                              |
-| ---------- | :-----------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| apiVersion |                        `string`                         | **REQUIRED**. This string MUST be the semantic version number of the Product as Code Specification version that the document uses. The `apiVersion` field SHOULD be used by tooling to interpret the document correctly. |
-| kind       |                        `string`                         | **REQUIRED**. MUST be `"Epic"` for Epic objects.                                                                                                                                                                         |
-| metadata   |           [Metadata Object](#metadata-object)           | **REQUIRED**. Metadata about the Epic including unique identifiers and timestamps.                                                                                                                                       |
-| spec       | [Epic Specification Object](#epic-specification-object) | **REQUIRED**. The specification of the Epic including description and optional fields.                                                                                                                                   |
+| Field Name |                          Type                           | Description                                                                                                                                                                                                                        |
+| ---------- | :-----------------------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| apiVersion |                        `string`                         | **REQUIRED**. This string MUST be `productascode.org/v0.1.0` for documents conforming to version 0.1.0 of the Product as Code Specification. The `apiVersion` field SHOULD be used by tooling to interpret the document correctly. |
+| kind       |                        `string`                         | **REQUIRED**. MUST be `"Epic"` for Epic objects.                                                                                                                                                                                   |
+| metadata   |           [Metadata Object](#metadata-object)           | **REQUIRED**. Metadata about the Epic including unique identifiers and timestamps.                                                                                                                                                 |
+| spec       | [Epic Specification Object](#epic-specification-object) | **REQUIRED**. The specification of the Epic including description and optional fields.                                                                                                                                             |
 
 #### Epic Specification Object
 
@@ -376,12 +376,12 @@ represent implementation steps within the unit of work.
 
 #### Fixed Fields
 
-| Field Name |                            Type                             | Description                                                                                                 |
-| ---------- | :---------------------------------------------------------: | ----------------------------------------------------------------------------------------------------------- |
-| apiVersion |                          `string`                           | **REQUIRED**. This string MUST be the semantic version number of the Product as Code Specification version. |
-| kind       |                          `string`                           | **REQUIRED**. MUST be `"Ticket"` for Ticket objects.                                                        |
-| metadata   |             [Metadata Object](#metadata-object)             | **REQUIRED**. Metadata about the Ticket including unique identifiers and timestamps.                        |
-| spec       | [Ticket Specification Object](#ticket-specification-object) | **REQUIRED**. The specification of the Ticket including description and optional fields.                    |
+| Field Name |                            Type                             | Description                                                                                                                                  |
+| ---------- | :---------------------------------------------------------: | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| apiVersion |                          `string`                           | **REQUIRED**. This string MUST be `productascode.org/v0.1.0` for documents conforming to version 0.1.0 of the Product as Code Specification. |
+| kind       |                          `string`                           | **REQUIRED**. MUST be `"Ticket"` for Ticket objects.                                                                                         |
+| metadata   |             [Metadata Object](#metadata-object)             | **REQUIRED**. Metadata about the Ticket including unique identifiers and timestamps.                                                         |
+| spec       | [Ticket Specification Object](#ticket-specification-object) | **REQUIRED**. The specification of the Ticket including description and optional fields.                                                     |
 
 #### Ticket Specification Object
 
