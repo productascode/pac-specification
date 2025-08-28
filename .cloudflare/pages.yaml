@@ -1,7 +1,0 @@
-# In your repo root: .cloudflare/pages.yml
-version: 1
-build:
-  command: bash scripts/publish-spec.sh
-  output: public
-environment:
-  NODE_VERSION: "22"
