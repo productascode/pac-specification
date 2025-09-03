@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://productascode.org/schemas/epic.json",
+  "title": "Epic",
+  "description": "An Epic represents a large feature set or initiative that provides business value",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "const": "productascode.org/v0.1.0",
+      "description": "The semantic version number of the Product as Code Specification"
+    },
+    "kind": {
+      "type": "string",
+      "const": "Epic",
+      "description": "The type of PaC object"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "spec": {
+      "$ref": "#/$defs/epicSpec"
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "created_at",
+        "updated_at",
+        "started_at",
+        "due_at",
+        "completed_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID format globally unique identifier"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Sequential integer identifier for human convenience"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the object"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the PaC object was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the PaC object was last updated"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work began, or null"
+        },
+        "due_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work is due, or null"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work was completed, or null"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Key-value pairs for system integration and tool-specific metadata",
+          "patternProperties": {
+            "^x-": {
+              "description": "Extension fields must start with x-"
+            }
+          }
+        }
+      }
+    },
+    "epicSpec": {
+      "type": "object",
+      "required": ["description", "status", "priority"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Clear description of what the Epic accomplishes and why it provides business value"
+        },
+        "parent": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID of parent Epic (must not be present for top-level Epics)"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planning", "in-progress", "completed", "cancelled"],
+          "description": "Current status of the Epic"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "description": "Business priority of the Epic"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Person or team responsible for this Epic's delivery"
+        },
+        "success_metrics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Measurable outcomes that define success"
+        },
+        "tickets": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of ticket ULIDs that belong to this Epic"
+        },
+        "epics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of sub-epic ULIDs that belong to this Epic"
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimation"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Key-value pairs for categorization and filtering"
+        },
+        "blocked_by": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of epic ULIDs blocking this Epic"
+        },
+        "related_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of related epic ULIDs (non-blocking)"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of epic ULIDs that must complete before this Epic can start"
+        }
+      },
+      "patternProperties": {
+        "^x-": {
+          "description": "Extension fields for custom data"
+        }
+      }
+    },
+    "estimation": {
+      "type": "object",
+      "required": ["estimated"],
+      "additionalProperties": false,
+      "properties": {
+        "estimated": {
+          "$ref": "#/$defs/estimateValue"
+        },
+        "actual": {
+          "$ref": "#/$defs/estimateValue"
+        }
+      }
+    },
+    "estimateValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "integer",
+          "enum": [1, 2, 3, 5, 8],
+          "description": "Fibonacci story point value"
+        },
+        "unit": {
+          "type": "string",
+          "const": "story_points",
+          "description": "Unit of estimation (story_points in v0.1.0)"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Confidence level in the estimate"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional context about the estimate"
+        }
+      }
+    }
+  }
+}
