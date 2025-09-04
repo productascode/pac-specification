@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Product as Code Configuration",
+  "description": "Configuration file for Product as Code projects",
+  "type": "object",
+  "required": ["apiVersion", "kind", "project", "sequences"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "description": "Version of the PaC specification",
+      "pattern": "^productascode\\.org/v\\d+\\.\\d+\\.\\d+$",
+      "example": "productascode.org/v0.1.0"
+    },
+    "kind": {
+      "type": "string",
+      "description": "Type of PaC object",
+      "enum": ["Config"]
+    },
+    "project": {
+      "type": "object",
+      "description": "Project metadata",
+      "required": ["name", "folder"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable project name",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief project description"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Default owner for project-level objects"
+        },
+        "folder": {
+          "type": "string",
+          "description": "Directory for PaC files",
+          "default": "product"
+        }
+      }
+    },
+    "sequences": {
+      "type": "object",
+      "description": "Sequence tracking for auto-generated sequence numbers",
+      "required": ["epic", "ticket"],
+      "additionalProperties": false,
+      "properties": {
+        "epic": {
+          "type": "integer",
+          "description": "Next epic sequence number",
+          "minimum": 1
+        },
+        "ticket": {
+          "type": "integer",
+          "description": "Next ticket sequence number",
+          "minimum": 1
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default values for new objects",
+      "properties": {
+        "epic": {
+          "type": "object",
+          "description": "Default values for Epic objects"
+        },
+        "ticket": {
+          "type": "object",
+          "description": "Default values for Ticket objects"
+        },
+        "task": {
+          "type": "object",
+          "description": "Default values for Task objects"
+        }
+      }
+    },
+    "enums": {
+      "type": "object",
+      "description": "Team-specific field values",
+      "properties": {
+        "ticket_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Valid ticket type values"
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Valid status values"
+        },
+        "priorities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Valid priority values"
+        }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "description": "Tool integrations configuration",
+      "properties": {
+        "git": {
+          "type": "object",
+          "description": "Git integration settings",
+          "properties": {
+            "branch_naming": {
+              "type": "string",
+              "description": "Branch naming pattern"
+            },
+            "commit_template": {
+              "type": "string",
+              "description": "Commit message template"
+            }
+          }
+        },
+        "ai": {
+          "type": "object",
+          "description": "AI assistant integration settings",
+          "properties": {
+            "context_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Files to include in AI context"
+            },
+            "rules_file": {
+              "type": "string",
+              "description": "Path to AI rules file"
+            }
+          }
+        }
+      }
+    }
+  }
+}

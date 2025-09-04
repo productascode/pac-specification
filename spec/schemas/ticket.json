@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://productascode.org/schemas/ticket.json",
+  "title": "Ticket",
+  "description": "A Ticket represents an atomic unit of development work that maps to a single git branch and pull request",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "additionalProperties": false,
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "const": "productascode.org/v0.1.0",
+      "description": "The semantic version number of the Product as Code Specification"
+    },
+    "kind": {
+      "type": "string",
+      "const": "Ticket",
+      "description": "The type of PaC object"
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "spec": {
+      "$ref": "#/$defs/ticketSpec"
+    }
+  },
+  "$defs": {
+    "metadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "created_at",
+        "updated_at",
+        "started_at",
+        "due_at",
+        "completed_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID format globally unique identifier"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Sequential integer identifier for human convenience"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable name for the object"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the PaC object was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when the PaC object was last updated"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work began, or null"
+        },
+        "due_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work is due, or null"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work was completed, or null"
+        },
+        "labels": {
+          "type": "object",
+          "description": "Key-value pairs for system integration and tool-specific metadata",
+          "patternProperties": {
+            "^x-": {
+              "description": "Extension fields must start with x-"
+            }
+          }
+        }
+      }
+    },
+    "ticketSpec": {
+      "type": "object",
+      "required": [
+        "description",
+        "type",
+        "status",
+        "priority",
+        "branch_name",
+        "assignee",
+        "reviewer"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Detailed description of what needs to be implemented or accomplished"
+        },
+        "parent": {
+          "type": "string",
+          "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$",
+          "description": "ULID of the Epic this Ticket belongs to"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["feature", "bug", "chore", "refactor"],
+          "description": "Type of work this Ticket represents"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["todo", "in-progress", "review", "completed", "blocked"],
+          "description": "Current status of the Ticket"
+        },
+        "priority": {
+          "type": ["string", "null"],
+          "enum": ["low", "medium", "high", "critical", null],
+          "description": "Priority of the Ticket within its Epic"
+        },
+        "branch_name": {
+          "type": ["string", "null"],
+          "description": "Git branch name for this unit of work"
+        },
+        "assignee": {
+          "type": ["string", "null"],
+          "description": "Person responsible for implementing this Ticket"
+        },
+        "reviewer": {
+          "type": ["string", "null"],
+          "description": "Person responsible for reviewing this Ticket's implementation"
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimation"
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Specific, testable conditions for completion"
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          },
+          "description": "Implementation steps within this unit of work"
+        },
+        "pull_request": {
+          "$ref": "#/$defs/pullRequest"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorization and filtering"
+        },
+        "blocked_by": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of ticket ULIDs blocking this Ticket"
+        },
+        "related_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of related ticket ULIDs (non-blocking)"
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+          },
+          "description": "List of ticket ULIDs that must complete before this Ticket can start"
+        }
+      },
+      "patternProperties": {
+        "^x-": {
+          "description": "Extension fields for custom data"
+        }
+      }
+    },
+    "task": {
+      "type": "object",
+      "required": ["metadata", "spec"],
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "$ref": "#/$defs/taskMetadata"
+        },
+        "spec": {
+          "$ref": "#/$defs/taskSpec"
+        }
+      }
+    },
+    "taskMetadata": {
+      "type": "object",
+      "required": [
+        "id",
+        "created_at",
+        "updated_at",
+        "started_at",
+        "due_at",
+        "completed_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Unique identifier within parent Ticket"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when Task was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when Task was last updated"
+        },
+        "started_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when work began, or null"
+        },
+        "due_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when Task is due, or null"
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when Task was completed, or null"
+        }
+      }
+    },
+    "taskSpec": {
+      "type": "object",
+      "required": ["description", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Specific, actionable description of the implementation step"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["todo", "in-progress", "completed", "blocked"],
+          "description": "Current status of the Task"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "feature",
+            "bug",
+            "chore",
+            "refactor",
+            "test",
+            "documentation"
+          ],
+          "description": "Type of work this Task represents"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "Person responsible for this Task"
+        },
+        "estimate": {
+          "type": "string",
+          "pattern": "^PT(\\d+H)?(\\d+M)?(\\d+S)?$",
+          "description": "ISO 8601 duration format for time estimate"
+        },
+        "actual_time": {
+          "type": "string",
+          "pattern": "^PT(\\d+H)?(\\d+M)?(\\d+S)?$",
+          "description": "ISO 8601 duration format for actual time spent"
+        }
+      }
+    },
+    "pullRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the pull request"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "open", "merged", "closed"],
+          "description": "Status of the pull request"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the pull request"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of when pull request was created"
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of people assigned to review"
+        }
+      }
+    },
+    "estimation": {
+      "type": "object",
+      "required": ["estimated"],
+      "additionalProperties": false,
+      "properties": {
+        "estimated": {
+          "$ref": "#/$defs/estimateValue"
+        },
+        "actual": {
+          "$ref": "#/$defs/estimateValue"
+        }
+      }
+    },
+    "estimateValue": {
+      "type": "object",
+      "required": ["value", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "integer",
+          "enum": [1, 2, 3, 5, 8],
+          "description": "Fibonacci story point value"
+        },
+        "unit": {
+          "type": "string",
+          "const": "story_points",
+          "description": "Unit of estimation (story_points in v0.1.0)"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["low", "medium", "high"],
+          "description": "Confidence level in the estimate"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional context about the estimate"
+        }
+      }
+    }
+  }
+}
